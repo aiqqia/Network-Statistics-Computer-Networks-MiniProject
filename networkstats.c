@@ -234,7 +234,7 @@ int main(int argc, char **argv)
     printf("\n\n******************* The packets received are : *********************\n\n");
 
     char command[100];
-    sprintf(command, "./shell.sh %s", fileName);
+    sprintf(command, "capinfos %s > ./output.txt", fileName);
     system(command);
     handle = pcap_open_offline(fileName, error_buffer);
     if (handle == NULL)
