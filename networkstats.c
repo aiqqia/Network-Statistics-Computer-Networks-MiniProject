@@ -77,37 +77,37 @@ void my_packet_handler(
     ip_header = (struct ip *)(packet + SIZE_ETHERNET);
     u_int size_ip = IP_HL(ip_header) * 4;
 
-    printf("---PACKET---\n");
+    printf("\t\t\t--------PACKET--------\n");
     if (ip_header->ip_p == 6)
-        printf("PROTOCOL:TCP\n");
+        printf("**\t\tPROTOCOL : TCP\n");
     if (ip_header->ip_p == 17)
     {
-        printf("PROTOCOL:UDP\n");
+        printf("**\t\tPROTOCOL : UDP\n");
     }
-    printf("Packet length:%d\n", header->len);
-    printf("IP Length:%d\n", ip_header->ip_len / 256);
-    printf("IP header length:%d\n", size_ip);
+    printf("**\t\tPacket Length : %d\n", header->len);
+    printf("**\t\tIP Length : %d\n", ip_header->ip_len / 256);
+    printf("**\t\tIP Header Length : %d\n", size_ip);
     //TCP PACKET
     if (ip_header->ip_p == 6)
     {
         t_header = (struct tcp_hdr *)(packet + SIZE_ETHERNET + size_ip);
         u_int size_tcp = TH_OFF(t_header) * 4;
         const char *payload = (u_char *)(packet + SIZE_ETHERNET + size_ip + size_tcp);
-        printf("TCP header length:%d\n", size_tcp);
-        printf("TCP segment length:%d\n", ip_header->ip_len / 256 - (size_ip + size_tcp));
-        printf("source port:%u\ndesination port:%u\n", t_header->th_sport, t_header->th_dport);
-        printf("FLAGS:0x%x\n", t_header->th_flags);
-        printf("sequence number:%u\n", t_header->th_seq);
-        printf("acknowledgement number:%u\n\n\n", t_header->th_ack);
+        printf("**\t\tTCP Header Length : %d\n", size_tcp);
+        printf("**\t\tTCP Segment Length : %d\n", ip_header->ip_len / 256 - (size_ip + size_tcp));
+        printf("**\t\tSource Port : %u\n**\t\tDesination Port : %u\n", t_header->th_sport, t_header->th_dport);
+        printf("**\t\tFLAGS : 0x%x\n", t_header->th_flags);
+        printf("**\t\tSequence Number : %u\n", t_header->th_seq);
+        printf("**\t\tAcknowledgement Number (Ack) : %u\n\n\n", t_header->th_ack);
     }
     //UDP PACKET
     else if (ip_header->ip_p == 17)
     {
         udp_header = (struct udp_hdr *)(packet + SIZE_ETHERNET + size_ip);
-        printf("source port:%u\ndestination port:%u\n", udp_header->sport, udp_header->dport);
-        printf("UDP datagram length:%u\n", udp_header->len / 256);
+        printf("**\t\tSource Port : %u\n**\t\tDestination Port : %u\n", udp_header->sport, udp_header->dport);
+        printf("**\t\tUDP Datagram Length : %u\n", udp_header->len / 256);
     }
-    printf("-------------------\n");
+    printf("\t\t----------------------------------------\n");
 }
 
 void fileParser()
@@ -141,7 +141,7 @@ void fileParser()
                 i++;
             }
             speed = atof(dataSpeed);
-            printf("AVERAGE SPEED(MBps):%4.2fMBps\n", speed);
+            printf("**\t\tAVERAGE SPEED(MBps)   : %4.2fMBps\n", speed);
             count++;
             break;
         case 12:
@@ -160,7 +160,7 @@ void fileParser()
                 j++;
             }
             Mbps = atof(bitSpeed);
-            printf("AVERAGE SPEED(Mbps):%4.2f Mbps\n", Mbps);
+            printf("**\t\tAVERAGE SPEED(Mbps)   : %4.2f Mbps\n", Mbps);
             count++;
             break;
         case 13:
@@ -180,7 +180,7 @@ void fileParser()
                 i++;
             }
             size = atof(fileSize);
-            printf("AVERAGE PACKET SIZE:%4.2f bytes\n", size);
+            printf("**\t\tAVERAGE PACKET SIZE   : %4.2f bytes\n", size);
             count++;
             break;
         case 14:
@@ -200,16 +200,22 @@ void fileParser()
                 i++;
             }
             prate = atof(packetRate);
-            printf("AVERAGE PACKET RATE/s:%4.2f kpackets/s\n", prate);
+            printf("**\t\tAVERAGE PACKET RATE/s : %4.2f kpackets/s\n", prate);
             count++;
             break;
         default:
             count++;
         }
     }
-    printf("AVERAGE RTT:%f seconds\n", (size * 2) / (speed * 1048576));
+    printf("**\t\tAVERAGE RTT           : %f seconds\n", (size * 2) / (speed * 1048576));
 }
 
+void menu(){
+    system("clear");
+    printf("\n******************************* MENU *******************************");
+    printf("\n\n**   Enter the file name with the .pcap extension for analysis    **");
+    printf("\n\n**     ==>   ");
+}
 
 int main(int argc, char **argv)
 {
@@ -223,8 +229,9 @@ int main(int argc, char **argv)
     int timeout = 1000;
 
     char fileName[100];
-    printf("enter pcap file name to analyze:");
+    menu();
     scanf("%s", fileName);
+    printf("\n\n******************* The packets received are : *********************\n\n");
 
     char command[100];
     sprintf(command, "./shell.sh %s", fileName);
@@ -237,6 +244,8 @@ int main(int argc, char **argv)
     }
     pcap_loop(handle, 0, my_packet_handler, NULL);
     pcap_close(handle);
+    printf("\n\n********************** FINAL NETWORK STATISTICS **********************\n\n");
     fileParser();
+    printf("\n\n***********************************************************************\n\n");
     return 0;
 }
