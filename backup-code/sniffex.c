@@ -18,8 +18,6 @@
 
 #include <arpa/inet.h>
 
-#include <assert.h>
-
 #define APP_NAME "sniffex"
 #define APP_DESC "Sniffer example using libpcap"
 
@@ -311,6 +309,7 @@ void got_packet(u_char * args,
 void parse() {
   FILE * f;
   f = fopen("data.txt", "r");
+  char c = fgetc(f);
   char buf[256];
   char temp[256];
   int count = 0;
@@ -329,36 +328,12 @@ void parse() {
       i++;
     }
     temp[j++] = 0;
-    
     if (count == 11) {
       speed = atof(temp);
-      
-      while(buf[i++] != ' ');
-      char type[10];
-      int k = 0;
-      while(isalpha(buf[i]) || buf[i] == '/'){
-        type[k++] = buf[i++];
-      }
-      type[k++] = 0;
-      if(strcmp(type, "kBps") == 0) speed /= 1024.0f;
-      else if(strcmp(type, "bytes/s") == 0) speed /= 1024.0f * 1024.0f;
-      else if(strcmp(type, "MBps") != 0) puts(type), assert(0);
-      
-      printf("**\t\tAVERAGE SPEED(MBps)   : %4.2f MBps\n", speed);
+      printf("**\t\tAVERAGE SPEED(MBps)   : %4.2f MBps\n", speed / (1024.0f));
     } else if (count == 12) {
       Mbps = atof(temp);
-      
-      while(buf[i++] != ' ');
-      char type[10];
-      int k = 0;
-      while(isalpha(buf[i])){
-        type[k++] = buf[i++];
-      }
-      type[k++] = 0;
-      if(strcmp(type, "kbps") == 0) Mbps /= 1024.0f;
-      else if(strcmp(type, "Mbps") != 0) assert(0);
-      
-      printf("**\t\tAVERAGE SPEED(Mbps)   : %4.2f Mbps\n", Mbps);
+      printf("**\t\tAVERAGE SPEED(Mbps)   : %4.2f Mbps\n", Mbps / (1024.0f));
     } else if (count == 13) {
       size = atof(temp);
       printf("**\t\tAVERAGE PACKET SIZE   : %4.2f bytes\n", size);
@@ -367,7 +342,7 @@ void parse() {
       printf("**\t\tAVERAGE PACKET RATE/s : %4.2f kpackets/s\n", prate);
     }
   }
-  printf("**\t\tAVERAGE RTT           : %f seconds\n", size * 2 / (speed * (1 << 20)));
+  printf("**\t\tAVERAGE RTT           : %f seconds\n", size / (speed * 512));
 }
 
 void menu() {
