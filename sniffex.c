@@ -275,10 +275,10 @@ void got_packet(u_char *args,
   /* define/compute tcp header offset */
   if (ip->ip_p == IPPROTO_UDP)
   {
-    struct sniff_udp *udp_header;
-    udp_header = (struct udp_hdr *)(packet + SIZE_ETHERNET + size_ip);
-    printf("**\t\tSource Port : %u\n**\t\tDestination Port : %u\n", udp_header->sport, udp_header->dport);
-    printf("**\t\tUDP Datagram Length : %u\n", udp_header->len / 256);
+    struct sniff_udp *udp;
+    udp = (struct sniff_udp *)(packet + SIZE_ETHERNET + size_ip);
+    printf("**\t\tSource Port : %u\n**\t\tDestination Port : %u\n", udp->sport, udp->dport);
+    printf("**\t\tUDP Datagram Length : %u\n", udp->len / 256);
   }
   else
   {
