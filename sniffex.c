@@ -441,10 +441,10 @@ int main(int argc, char **argv)
   bpf_u_int32 net = 0;      /* ip */
   int num_packets = 0;      /* number of packets to capture */
 
-  char FileName[100];
+  char fileName[100];
   menu();
-  scanf("%s", FileName);
-  handle = pcap_open_offline(FileName, errbuf);
+  scanf("%s", fileName);
+  handle = pcap_open_offline(fileName, errbuf);
   if (handle == NULL)
   {
     fprintf(stderr, "Couldn't open device\n");
@@ -491,14 +491,14 @@ int main(int argc, char **argv)
   pcap_freecode(&fp);
   pcap_close(handle);
 
-  char command[100];
-  sprintf(command, "capinfos %s > ./data.txt", FileName);
+  char command[200];
+  sprintf(command, "capinfos %s > ./data.txt", fileName);
   system(command);
   printf("\n\n********************** FINAL NETWORK STATISTICS **********************\n\n");
   parse();
   printf("\n\n***********************************************************************\n\n");
 
-  printf("\nCapture complete.\n");
+  printf("\nCapture complete.\n\n");
 
   return 0;
 }
