@@ -351,7 +351,7 @@ void parse()
         i++, j++;
       }
       speed = atof(Data_Speed);
-      printf("**\t\tAVERAGE SPEED(MBps)   : %4.2fMBps\n", speed);
+      printf("**\t\tAVERAGE SPEED(MBps)   : %4.2f MBps\n", speed);
       count++;
     }
     else if (count == 12)
